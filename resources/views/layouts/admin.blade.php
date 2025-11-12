@@ -30,14 +30,24 @@
         <aside class="col-span-12 lg:col-span-3">
             <div class="bg-white rounded-xl shadow p-4 space-y-2 text-sm">
                 <div class="font-semibold text-slate-700 mb-2">Navigation</div>
+
+                {{-- Overview --}}
                 <a class="block px-3 py-2 rounded hover:bg-slate-100 {{ request()->routeIs('admin.dashboard') ? 'bg-slate-100 font-medium' : '' }}"
                    href="{{ route('admin.dashboard') }}">📊 Overview</a>
+
+                {{-- Students --}}
                 <a class="block px-3 py-2 rounded hover:bg-slate-100" href="#">👤 Students</a>
+
+                {{-- Courses --}}
                 <a class="block px-3 py-2 rounded hover:bg-slate-100" href="#">📚 Courses</a>
+
+                {{-- Categories --}}
+                <a class="block px-3 py-2 rounded hover:bg-slate-100 {{ request()->routeIs('categories.*') ? 'bg-slate-100 font-medium text-indigo-600' : '' }}"
+                   href="{{ route('categories.index') }}">🏷️ Categories</a>
             </div>
         </aside>
 
-        {{-- Content slot --}}
+        {{-- Main Content --}}
         <main class="col-span-12 lg:col-span-9">
             @yield('content')
         </main>
