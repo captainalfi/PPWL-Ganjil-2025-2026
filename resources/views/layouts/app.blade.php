@@ -1,36 +1,62 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>@yield('title', config('app.name'))</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="font-sans antialiased bg-slate-100">
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
+    {{-- Top Navigation --}}
+    <header class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="{{ url('/') }}" class="flex items-center gap-2">
+                    <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-white font-bold">
+                        A
+                    </span>
+                    <span class="font-semibold text-slate-800 text-sm sm:text-base">
+                        {{ config('app.name', 'Laravel') }}
+                    </span>
+                </a>
+            </div>
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
-
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+            <nav class="flex items-center gap-4 text-sm">
+                @auth
+                    <a href="{{ route('admin.dashboard') }}" class="hover:text-indigo-600">
+                        Dashboard
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="px-3 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-700 text-xs sm:text-sm">
+                            Logout
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="hover:text-indigo-600">
+                        Login
+                    </a>
+                    <a href="{{ route('register') }}"
+                       class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 text-xs sm:text-sm">
+                        Register
+                    </a>
+                @endauth
+            </nav>
         </div>
-    </body>
+    </header>
+
+    {{-- Page Content --}}
+    <main class="min-h-screen">
+        @yield('content')
+    </main>
+
+    <footer class="text-center text-xs text-slate-500 py-6">
+        © {{ date('Y') }} {{ config('app.name') }} — Admin Panel
+    </footer>
+</body>
 </html>

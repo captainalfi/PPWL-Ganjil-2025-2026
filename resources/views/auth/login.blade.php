@@ -1,53 +1,91 @@
-<x-guest-layout>
-    <div class="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-blue-900">
-        <div class="bg-white shadow-lg rounded-2xl p-8 w-[400px]">
-            <h2 class="text-2xl font-bold text-center text-blue-800 mb-6">Login to Your Account</h2>
+{{-- resources/views/auth/login.blade.php --}}
+@extends('layouts.app')
 
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
+@section('title', 'Login')
 
-                <!-- Email -->
-                <div class="mb-4">
-                    <label for="email" class="block text-gray-700 font-semibold">Email Address</label>
-                    <input id="email" type="email" name="email" value="{{ old('email') }}"
-                        class="w-full mt-1 p-2 border rounded-lg focus:ring focus:ring-blue-300"
-                        required autofocus>
-                    @error('email')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+@section('content')
+<div class="min-h-screen flex items-center justify-center px-4">
+    <div class="w-full max-w-md bg-white shadow-md rounded-2xl p-6 sm:p-8">
 
-                <!-- Password -->
-                <div class="mb-4">
-                    <label for="password" class="block text-gray-700 font-semibold">Password</label>
-                    <input id="password" type="password" name="password"
-                        class="w-full mt-1 p-2 border rounded-lg focus:ring focus:ring-blue-300"
-                        required>
-                    @error('password')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Remember Me -->
-                <div class="flex items-center mb-4">
-                    <input id="remember_me" type="checkbox" name="remember"
-                        class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                    <label for="remember_me" class="ml-2 text-gray-600 text-sm">Remember Me</label>
-                </div>
-
-                <!-- Button -->
-                <button type="submit"
-                    class="w-full bg-blue-700 text-white font-bold py-2 rounded-lg hover:bg-blue-800 transition">
-                    Log In
-                </button>
-
-                <p class="text-sm text-center mt-4 text-gray-600">
-                    Don’t have an account?
-                    <a href="{{ route('register') }}" class="text-blue-700 font-semibold hover:underline">
-                        Register here
-                    </a>
-                </p>
-            </form>
+        <div class="mb-6">
+            <h1 class="text-2xl font-semibold text-slate-800">Welcome back 👋</h1>
+            <p class="text-sm text-slate-500 mt-1">
+                Silakan login untuk mengakses Dashboard UTS PPWL.
+            </p>
         </div>
+
+        {{-- ✅ Flash message sukses registrasi --}}
+        @if (session('success'))
+            <div class="mb-4 rounded-lg border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-800">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        {{-- Status login (punya Breeze) --}}
+        <x-auth-session-status class="mb-4" :status="session('status')" />
+
+        <form method="POST" action="{{ route('login') }}" class="space-y-4">
+            @csrf
+
+            <!-- Email Address -->
+            <div>
+                <x-input-label for="email" :value="__('Email')" />
+                <x-text-input id="email"
+                              class="block mt-1 w-full"
+                              type="email"
+                              name="email"
+                              :value="old('email')"
+                              required
+                              autofocus
+                              autocomplete="username" />
+                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            </div>
+
+            <!-- Password -->
+            <div>
+                <x-input-label for="password" :value="__('Password')" />
+                <x-text-input id="password"
+                              class="block mt-1 w-full"
+                              type="password"
+                              name="password"
+                              required
+                              autocomplete="current-password" />
+                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            </div>
+
+            <!-- Remember Me + Forgot -->
+            <div class="flex items-center justify-between mt-2">
+                <label for="remember_me" class="inline-flex items-center text-sm text-slate-600">
+                    <input id="remember_me"
+                           type="checkbox"
+                           class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                           name="remember">
+                    <span class="ms-2">{{ __('Remember me') }}</span>
+                </label>
+
+                @if (Route::has('password.request'))
+                    <a class="text-sm text-indigo-600 hover:text-indigo-800"
+                       href="{{ route('password.request') }}">
+                        {{ __('Forgot your password?') }}
+                    </a>
+                @endif
+            </div>
+
+            <!-- Submit -->
+            <div class="mt-6">
+                <button
+                    class="w-full inline-flex justify-center items-center px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    {{ __('Log in') }}
+                </button>
+            </div>
+
+            <p class="mt-4 text-xs text-slate-500 text-center">
+                Belum punya akun?
+                <a href="{{ route('register') }}" class="text-indigo-600 hover:text-indigo-800 font-medium">
+                    Register sekarang
+                </a>
+            </p>
+        </form>
     </div>
-</x-guest-layout>
+</div>
+@endsection
