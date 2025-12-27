@@ -41,6 +41,7 @@ class RegisteredUserController extends Controller
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
+            'role'     => 'user', // default user
         ]);
 
         // ✅ Trigger event Registered (dipakai kalau nanti mau email verification, dll)
