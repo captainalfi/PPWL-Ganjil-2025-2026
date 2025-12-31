@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.user')
 
 @section('title', 'Products')
 
@@ -11,10 +11,13 @@
             <h1 class="text-2xl font-semibold text-slate-800">Products</h1>
             <p class="text-sm text-slate-500">Manage product data and its category.</p>
         </div>
-        <a href="{{ route('products.create') }}"
-           class="inline-flex items-center px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700">
-            + Add Product
-        </a>
+
+        @if(auth()->user()->role === 'admin')
+            <a href="{{ route('products.create') }}"
+               class="inline-flex items-center px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700">
+                + Add Product
+            </a>
+        @endif
     </div>
 
     {{-- Search --}}
@@ -60,6 +63,7 @@
                         <td class="px-4 py-3 align-top">
                             {{ $loop->iteration + ($products->currentPage()-1) * $products->perPage() }}
                         </td>
+
                         <td class="px-4 py-3 align-top">
                             <div class="font-medium text-slate-800">{{ $product->name }}</div>
                             @if($product->description)
@@ -68,32 +72,51 @@
                                 </div>
                             @endif
                         </td>
+
                         <td class="px-4 py-3 align-top">
                             <span class="inline-flex px-2 py-1 rounded-full bg-slate-100 text-xs text-slate-700">
                                 {{ $product->category?->name ?? '-' }}
                             </span>
                         </td>
+
                         <td class="px-4 py-3 align-top text-right">
                             Rp {{ number_format($product->price, 0, ',', '.') }}
                         </td>
+
                         <td class="px-4 py-3 align-top">
                             <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('products.edit', $product) }}"
-                                   class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs hover:bg-slate-50">
-                                    Edit
-                                </a>
 
-                                {{-- Delete pakai SweetAlert (class js-delete-confirm) --}}
-                                <form action="{{ route('products.destroy', $product) }}"
-                                      method="POST"
-                                      class="inline js-delete-confirm">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="px-3 py-1.5 rounded-lg border border-red-500 text-xs text-red-600 hover:bg-red-50">
-                                        Delete
-                                    </button>
-                                </form>
+                                {{-- CHECKOUT (USER BIASA) --}}
+                                @if(auth()->user()->role === 'user')
+                                    <form action="{{ route('checkout', $product) }}" method="POST">
+                                        @csrf
+                                        <button
+                                            type="submit"
+                                            class="px-3 py-1.5 rounded-lg bg-green-600 text-white text-xs hover:bg-green-700">
+                                            Checkout
+                                        </button>
+                                    </form>
+                                @endif
+
+                                {{-- ADMIN ACTION --}}
+                                @if(auth()->user()->role === 'admin')
+                                    <a href="{{ route('products.edit', $product) }}"
+                                       class="px-3 py-1.5 rounded-lg border border-slate-300 text-xs hover:bg-slate-50">
+                                        Edit
+                                    </a>
+
+                                    <form action="{{ route('products.destroy', $product) }}"
+                                          method="POST"
+                                          class="inline js-delete-confirm">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="px-3 py-1.5 rounded-lg border border-red-500 text-xs text-red-600 hover:bg-red-50">
+                                            Delete
+                                        </button>
+                                    </form>
+                                @endif
+
                             </div>
                         </td>
                     </tr>
